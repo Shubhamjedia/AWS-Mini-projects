@@ -18,7 +18,42 @@ The solution brings together three core service pillars:
 
 ---
 
-## 3. Architecture Flowchart & Working
+## 3. Implementation Workflow & Deployment Screenshots
+
+### Step 1: User Authentication via Google Sign-In
+The user authenticates on the client web interface using Google OAuth 2.0. Upon successful login, the application acquires a valid Google ID token and updates the UI status
+
+<img width="686" height="448" alt="login" src="https://github.com/user-attachments/assets/718a53af-9234-4fa9-b0a2-422bffcfa067" />
+
+*Figure 1: Client web page showing successful Google authentication status.*
+
+---
+
+### Step 2: STS Token Exchange & Direct S3 File Upload
+The client passes the Google ID token to AWS STS via `assumeRoleWithWebIdentity` to obtain temporary keys. The selected file (`modified sop.docx`) is then directly uploaded to S3, triggering a browser confirmation popup[cite: 7].
+
+<img width="1362" height="521" alt="s3" src="https://github.com/user-attachments/assets/f3f88e34-ce01-4e32-b6cd-0b496deb66ea" />
+
+*Figure 2: Browser popup confirming successful direct file upload to S3 using temporary AWS keys[cite: 7].*
+
+---
+
+### Step 3: Verification of S3 Directory Structure
+Verification inside the Amazon S3 Management Console for bucket `user-data-11223344` shows the dynamically created prefix folder `google-users-uploads/`[cite: 8].
+
+<img width="1912" height="816" alt="s3 verify" src="https://github.com/user-attachments/assets/00646acf-e64b-4b03-bd03-96b5073a5305" />
+
+*Figure 3: AWS S3 Bucket Console verifying the `google-users-uploads/` folder[cite: 8].*
+
+---
+
+### Step 4: Verification of Uploaded File Object
+Navigating inside `google-users-uploads/` confirms that the file `1794399910854_modified sop.docx` (229.0 KB) was saved successfully[cite: 9].
+<img width="1917" height="812" alt="s3 verify 2" src="https://github.com/user-attachments/assets/e17273e0-b2cc-4728-b510-e78b72a09c5e" />
+
+*Figure 4: Detailed view inside Amazon S3 confirming uploaded file object and timestamp[cite: 9].*
+
+## 4. Architecture Flowchart & Working
 
 ```text
 +-------------------------------------------------------+
@@ -67,3 +102,4 @@ The solution brings together three core service pillars:
 +-------------------------------------------------------+
 |                   Amazon S3 Bucket                    | ---> File safely stored in `google-users-uploads/`
 +-------------------------------------------------------+
+
